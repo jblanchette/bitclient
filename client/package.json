@@ -1,0 +1,18 @@
+{
+  "name": "bitclient",
+  "version": "1.0.0",
+  "description": "bitclient",
+  "devDependencies": {
+    "lodash": "4.17.4",
+    "del": "2.2.2",
+    "gulp": "3.9.1",
+    "gulp-replace": "0.5.4",
+    "gulp-util": "3.0.8",
+    "gulp-concat": "2.6.1",
+    "gulp-connect": "5.0.0",
+    "gulp-sass": "3.1.0"
+  },
+  "dependencies": {
+
+  }
+}
