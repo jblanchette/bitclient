@@ -28,7 +28,6 @@ func LoadConfig() ExchangeConfiguration {
 func NewExchange() *bittrex.Bittrex {
     configuration := LoadConfig()
 
-    fmt.Println("Using config: ", configuration)
     var exchange = bittrex.New(configuration.Key, configuration.Secret)
     return exchange
 }

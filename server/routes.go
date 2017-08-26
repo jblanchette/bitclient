@@ -18,9 +18,9 @@ var exchange = NewExchange()
 
 var routes = Routes{
     Route{
-        "Balance",
+        "Balances",
         "GET",
-        "/balance",
+        "/balances",
         Balance(exchange),
     },
 }
