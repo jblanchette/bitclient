@@ -15,8 +15,9 @@ __pycache__
 node_modules/
 */node_modules/
 
-# Don't include any plugin src here
-plugins/
+# don't include the built binary
+
+server/server.exe
 
 # Local stuff
 .bash_history
