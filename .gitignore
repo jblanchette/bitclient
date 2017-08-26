@@ -10,6 +10,11 @@ __pycache__
 # SublimeText workspace files
 *.sublime-workspace
 
+# no npm
+
+node_modules/
+*/node_modules/
+
 # Don't include any plugin src here
 plugins/
 
