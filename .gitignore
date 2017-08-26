@@ -1,1 +1,18 @@
+# NEVER add your api config info to the git repo
 apiconfig.json
+
+.DS_Store
+.COOKIES
+__pycache__
+*.pyc
+*.egg-info
+
+# SublimeText workspace files
+*.sublime-workspace
+
+# Don't include any plugin src here
+plugins/
+
+# Local stuff
+.bash_history
+.COOKIES
