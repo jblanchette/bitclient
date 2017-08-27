@@ -16,6 +16,50 @@ $min-game-width: 350px;
     min-height: $min-game-height;
 }
 
+.home-wrapper {
+    padding: 2rem;
+}
+
+.left-panel,
+.right-panel {
+    display: inline-block;
+    vertical-align: top;
+    padding: 1rem;
+    min-height: 400px;
+}
+
+.left-panel {
+    width: 350px;
+    border-right: 1px solid #333;
+
+    .coin-record-toggle {
+        cursor: pointer;
+        font-weight: 700;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.right-panel {
+    h2 {
+        font-size: 24px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .coin-wrapper {
+        max-width: 800px;
+        font-size: 12px;
+    }
+
+    .coin-info {
+        height: 550px;
+        overflow-y: auto;
+    }
+}
+
 @media screen and (max-width: 850px) {
     .wrapper {
         font-size: 18px;

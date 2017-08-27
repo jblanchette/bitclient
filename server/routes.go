@@ -23,4 +23,22 @@ var routes = Routes{
         "/balances",
         Balance(exchange),
     },
+    Route{
+        "Ticker",
+        "GET",
+        "/ticker",
+        Ticker(exchange),
+    },
+    Route{
+        "MarketHistory",
+        "GET",
+        "/market-history",
+        MarketHistory(exchange),
+    },
+    Route{
+        "PriceData",
+        "GET",
+        "/price-data",
+        PriceData(exchange),
+    },
 }

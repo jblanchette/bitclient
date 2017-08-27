@@ -5,6 +5,7 @@
           integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
           crossorigin="anonymous"></script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.0/bluebird.core.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
 
         <script src="js/vue.js"></script>
@@ -21,7 +22,53 @@
 
     <body>
         <div class="wrapper">
-            <button v-on:click="getBalances()">test</button>
+            <div class="home-wrapper">
+
+                <div class="left-panel">
+                    <button class="btn" v-on:click="getBalances()">Fetch Balances</button>
+                    <table>
+                        <th>Currency</th>
+                        <th>Balance</th>
+                        <tr v-for="record in balances">
+                            <td class="coin-record-toggle" v-on:click="selectCoin(record)">
+                                {{ record.Currency }}
+                            </td>
+                            <td>
+                                {{ record.Available }} <b>/</b> {{ record.Balance }}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="right-panel">
+                    <div class="coin-wrapper">
+                        <div v-if="!focusCoin">
+                            <h2>Choose a coin to inspect.</h2>
+                        </div>
+
+                        <div v-if="focusCoin">
+                            <h2>Selected Coin: {{ focusCoin.Currency }}</h2>
+
+                            <div v-if="focusTicker">
+                                Ticker Data: <br>
+                                {{ focusTicker }}
+                            </diV>
+
+                            <div class="coin-info">
+                                <div v-if="focusPriceData">
+                                    Market History: <br>
+                                    
+                                    <ul>
+                                        <li v-for="record in focusPriceData">
+                                            {{ record }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>
