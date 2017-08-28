@@ -49,21 +49,20 @@
                         <div v-if="focusCoin">
                             <h2>Selected Coin: {{ focusCoin.Currency }}</h2>
 
-                            <div v-if="focusTicker">
+                            <div v-if="focusCoinInfo.ticker">
                                 Ticker Data: <br>
-                                {{ focusTicker }}
+                                {{ focusCoinInfo.ticker }}
                             </diV>
 
-                            <div class="coin-info">
-                                <div v-if="focusPriceData">
-                                    Market History: <br>
-                                    
-                                    <ul>
-                                        <li v-for="record in focusPriceData">
-                                            {{ record }}
-                                        </li>
-                                    </ul>
-                                </div>
+                            <div class="coin-info" v-if="focusCoinInfo.priceData">
+                                Price Ticks: <br>
+                                
+                                <ul>
+                                    <li v-for="record in focusCoinInfo.priceData">
+                                        {{ record }}
+                                    </li>
+                                </ul>
+                                
                             <div>
                         </div>
                     </div>

@@ -3,10 +3,20 @@ $(function () {
     console.log("Started bitclient");
     var vmData = {
         focusCoin: null,
-        focusTicker: null,
-        focusMarketHistory: null,
-        focusPriceData: null,
+        focusCoinInfo: {
+            coin: null,
+            ticker: null,
+            marketHistory: null,
+            priceData: null
+        },
         balances: null
+    };
+
+    var coinRoutes = {
+        "ticker": "/ticker",
+        "balances": "/balances",
+        "marketHistory": "/market-history",
+        "priceData": "/price-data"
     };
 
     var HomeCtrl = {
@@ -18,45 +28,46 @@ $(function () {
 
             request("/balances", "GET")
                 .done(function (data) {
-                    console.log("Got data: ", data);
-
                     self.balances = data;
                 })
                 .fail(function (err) {
-                    console.error("Net Error: ", err);
+                    console.error("Failed to fetch balances:", err);
                 });
         },
-        getTicker: Promise.method(function (tickerName) {
-            console.log("Fetching ticker for: ", tickerName);
-            return request("/ticker", "GET", { tickerName: tickerName });
-        }),
-        getMarketHistory: Promise.method(function (tickerName) {
-            console.log("Fetching market history for: ", tickerName);
-            return request("/market-history", "GET", { tickerName: tickerName });
-        }),
-        getPriceData: Promise.method(function (tickerName) {
-            console.log("Fetching market price data for: ", tickerName);
-            return request("/price-data", "GET", { tickerName: tickerName, interval: "oneMin" });
+        fetchCoinData: Promise.method( function (tickerName, coinInfo) {
+            var route = _.get(coinRoutes, coinInfo);
+            var coinObj = {
+                tickerName: tickerName
+            };
+
+            if (coinInfo === "priceData") {
+                // todo get the interval from some UI / config?
+                coinObj.interval = "oneMin";        
+            }
+
+            return request(route, "GET", coinObj)
+                .then(function (data) {
+                    return {
+                        coinInfo: coinInfo,
+                        data: data
+                    };
+                });
         }),
         selectCoin: function (coin) {
             var self = this;
             self.focusCoin = coin;
             
             if (coin) {
-                var currency = "BTC-" + _.get(coin, "Currency");
-                self.getTicker(currency).then(self.setFocusTicker);
-                self.getMarketHistory(currency).then(self.setFocusMarketHistory);
-                self.getPriceData(currency).then(self.setFocusPriceData);
+                var tickerName = "BTC-" + _.get(coin, "Currency");
+                return _.map(["ticker", "marketHistory", "priceData"], function (coinInfo) {
+                    self.fetchCoinData(tickerName, coinInfo)
+                        .then(self.setCoinInfo);
+                });
             }
         },
-        setFocusTicker: function (data) {
-            this.focusTicker = data;
-        },
-        setFocusMarketHistory: function (data) {
-            this.focusMarketHistory = data;
-        },
-        setFocusPriceData: function (data) {
-            this.focusPriceData = data;
+        setCoinInfo: function (info) {
+            console.log("Coin info: ", info);
+            this.focusCoinInfo[info.coinInfo] = info.data;
         }
     };
 

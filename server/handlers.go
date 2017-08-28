@@ -85,7 +85,7 @@ func PriceData(exchange *bittrex.Bittrex) http.HandlerFunc {
 	        panic(err)
 	    }	
 		} else {
-			panic("No ticker name provided.")
+			panic("No ticker name/interval provided.")
 		}
 	}
 }
