@@ -1,3 +1,4 @@
+var localFormat = "YYYY-MM-DDThh:mm:ss.SSS";
 
 class LineGraph {
 	constructor (width, height, canvasId, signals) {
@@ -12,6 +13,8 @@ class LineGraph {
 			end: focusSignalExtent[1]
 		};
 
+		this.actualRange = _.clone(this.focusRange);
+
 		this.xScale = d3.scaleTime()
 			.range([0, width]);
 
@@ -19,7 +22,6 @@ class LineGraph {
 			.range([height, 0]);
 
 		this.yMidpoint = Math.round(this.height / 2);
-		this.xMidpoint = Math.round(this.width / 2);
 	}
 
 	setFocusRange (range) {
@@ -31,11 +33,16 @@ class LineGraph {
 	}
 
 	getFocusRange () {
-		var localFormat = "YYYY-MM-DDThh:mm:ss.SSS";
-
 		return {
 			start: this.focusRange.start.format(localFormat),
 			end: this.focusRange.end.format(localFormat)
+		};
+	}
+
+	getActualRange () {
+		return {
+			start: this.actualRange.start.format(localFormat),
+			end: this.actualRange.end.format(localFormat)
 		};
 	}
 
@@ -49,7 +56,7 @@ class LineGraph {
 		ctx.stroke();
 	}
 
-	renderSignal (ctx, signal) {
+	renderSignal (ctx, signal, yDomain) {
 		var self = this;
 		var data = signal.points();
 		
@@ -57,7 +64,7 @@ class LineGraph {
 			.domain(signal.extent("x"));
 
 		this.yScale
-			.domain([0, d3.max(data, function (d) { return d.y; })]);
+			.domain(yDomain);
 
 		ctx.strokeStyle = signal.color;
     ctx.lineWidth = 1;
@@ -65,14 +72,28 @@ class LineGraph {
 		ctx.beginPath();
 		ctx.moveTo(0, this.yMidpoint);
 
+
+		var yOffset = Math.round(self.yMidpoint / 2);
 		_.each(data, function (point) {
 			var x = self.xScale(point.x);
-			var y = self.yScale(point.y) + self.yMidpoint;
+			var y = self.yScale(point.y) + yOffset;
 
 			ctx.lineTo(x, y);
 		});
 		
 		ctx.stroke();
+	}
+
+	renderSignals (ctx) {
+		var self = this;
+		// figure out the overal max yDomain for all signals
+		var yDomain = _.maxBy(this.signals, function (signal) {
+			return signal.domain();
+		}).domain();
+		
+		_.each(this.signals, function (signal) {
+			self.renderSignal(ctx, signal, yDomain);
+		});
 	}
 
 	render () {
@@ -87,9 +108,7 @@ class LineGraph {
 		// render grid
 		this.renderGrid(ctx);
 		// render signals
-		_.each(this.signals, function (signal) {
-			self.renderSignal(ctx, signal);
-		});
+		this.renderSignals(ctx);
 		
 		///
 		console.timeEnd("render");

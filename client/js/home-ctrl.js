@@ -12,6 +12,7 @@ $(function () {
             lineGraph: null
         },
         coinGraph: {
+            interval: "oneMin",
             rangeStart: null,
             rangeEnd: null
         },
@@ -40,16 +41,6 @@ $(function () {
             "y": "C",
             "label": "current",
             "color": "black"
-        },
-        {
-            "y": "V",
-            "label": "volume",
-            "color": "green"
-        },
-        {
-            "y": "BV",
-            "label": "bvolume",
-            "color": "green"
         }
     ];
 
@@ -59,14 +50,13 @@ $(function () {
 
     var HomeCtrl = {
         getBalances: function () {
-            console.log("Getting balances...");
-
+            console.time("balances");
             var self = this;
-            console.log("Self is: ", self);
 
             request("/balances", "GET")
                 .done(function (data) {
                     self.balances = data;
+                    console.timeEnd("balances");
                 })
                 .fail(function (err) {
                     console.error("Failed to fetch balances:", err);
@@ -80,7 +70,7 @@ $(function () {
 
             if (coinKey === "priceData") {
                 // todo get the interval from some UI / config?
-                coinObj.interval = "oneMin";        
+                coinObj.interval = this.coinGraph.interval;       
             }
 
             return request(route, "GET", coinObj)
@@ -134,14 +124,21 @@ $(function () {
             self.coinGraph.rangeStart = focusRange.start;
             self.coinGraph.rangeEnd = focusRange.end;
 
+            var msToHours = 3600 * 1000;
+            var actualRange = lineGraph.getActualRange();
+            
+            self.coinGraph.rangeMinStart = actualRange.start;
+            self.coinGraph.rangeMaxStart = actualRange.end;
+
+            self.coinGraph.rangeMinEnd = actualRange.start;
+            self.coinGraph.rangeMAxEnd = actualRange.end;
+
             self.renderCoin();
         },
         setCoinInfo: function (info) {
             this.focusCoinInfo[info.coinKey] = info.data;
         },
         setControl: function (key) {
-            console.log("Setting control key: ", key);
-            console.log("New val: ", _.get(this.coinGraph, key));
             var self = this;
 
             switch (key) {
@@ -150,12 +147,23 @@ $(function () {
                     var lineGraph = _.get(self.focusCoinInfo, "lineGraph");
 
                     if (lineGraph) {
-                        console.log("setting new focus range.");
                         lineGraph.setFocusRange({
                             start: moment(self.coinGraph.rangeStart),
                             end: moment(self.coinGraph.rangeEnd)
                         });
                     }
+                break;
+                case "interval":
+                    var interval = _.get(self.coinGraph, "interval");
+                    var tickerName = "BTC-" + _.get(self.focusCoin, "Currency");
+
+                    console.log("fetch: ", interval, "ticker: ", tickerName);
+
+                    console.time("coinFetch");
+                    self.fetchCoinData(tickerName, "priceData")
+                        .then(self.setCoinInfo)
+                        .then(self.selectCoinHandler);
+                break;
             };
 
         },

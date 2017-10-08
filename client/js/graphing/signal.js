@@ -36,6 +36,10 @@ class Signal {
 		return d3.extent(this.points(), function (d) { return _.get(d, which); });
 	}
 
+	domain () {
+		return [0,  d3.max(this.points(), function (d) { return d.y; })];
+	}
+
 	create (dataPoints) {
 		this._points = _.map(dataPoints, _.bind(this.makePoint, this));
 	}
