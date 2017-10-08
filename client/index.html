@@ -5,11 +5,16 @@
           integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
           crossorigin="anonymous"></script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.0/bluebird.core.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.js"></script>
 
         <script src="js/vue.js"></script>
         <script src="js/api.js"></script>
+
+        <script src="js/graphing/signal.js"></script>
+        <script src="js/graphing/line-graph.js"></script>
 
         <script src="js/home-ctrl.js"></script>
 
@@ -54,15 +59,8 @@
                                 {{ focusCoinInfo.ticker }}
                             </diV>
 
-                            <div class="coin-info" v-if="focusCoinInfo.priceData">
-                                Price Ticks: <br>
-                                
-                                <ul>
-                                    <li v-for="record in focusCoinInfo.priceData">
-                                        {{ record }}
-                                    </li>
-                                </ul>
-                                
+                            <div class="coin-info">
+                                <canvas id="coinGraph" height="400" width="400"></canvas>
                             <div>
                         </div>
                     </div>

@@ -84,3 +84,10 @@ body {
 @media screen and (max-width: 850px) {
   .wrapper {
     font-size: 18px; } }
+
+#coinGraph {
+  width: 450px;
+  height: 400px;
+  border: 1px solid #000;
+  margin: 1rem auto;
+  background: #FFF; }
