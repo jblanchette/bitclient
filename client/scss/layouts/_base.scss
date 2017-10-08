@@ -54,7 +54,7 @@ $min-game-width: 350px;
     }
 
     .coin-info {
-        height: 550px;
+        min-height: 550px;
         overflow-y: auto;
     }
 }

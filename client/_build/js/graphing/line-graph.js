@@ -6,6 +6,12 @@ class LineGraph {
 		this.canvasId = canvasId;
 		this.signals = signals;
 
+		var focusSignalExtent = _.first(signals).extent("x");
+		this.focusRange = {
+			start: focusSignalExtent[0],
+			end: focusSignalExtent[1]
+		};
+
 		this.xScale = d3.scaleTime()
 			.range([0, width]);
 
@@ -14,6 +20,23 @@ class LineGraph {
 
 		this.yMidpoint = Math.round(this.height / 2);
 		this.xMidpoint = Math.round(this.width / 2);
+	}
+
+	setFocusRange (range) {
+		this.focusRange = range;
+
+		_.each(this.signals, function (signal) {
+			signal.clamp(range);
+		});
+	}
+
+	getFocusRange () {
+		var localFormat = "YYYY-MM-DDThh:mm:ss.SSS";
+
+		return {
+			start: this.focusRange.start.format(localFormat),
+			end: this.focusRange.end.format(localFormat)
+		};
 	}
 
 	renderGrid (ctx) {
@@ -36,7 +59,7 @@ class LineGraph {
 		this.yScale
 			.domain([0, d3.max(data, function (d) { return d.y; })]);
 
-		ctx.strokeStyle = "#FFAACC";
+		ctx.strokeStyle = signal.color;
     ctx.lineWidth = 1;
 
 		ctx.beginPath();

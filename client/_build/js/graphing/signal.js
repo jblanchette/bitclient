@@ -4,6 +4,7 @@ class Signal {
 		this.options = options;
 		this.opts();
 
+		this._clamp = null;
 		this._points = [];
 	}
 
@@ -12,6 +13,9 @@ class Signal {
 
 		this.xField = _.get(opt, "x") || "T";
 		this.yField = _.get(opt, "y") || "C";
+		this.color = _.get(opt, "color") || "#FFAACC";
+
+		console.log("Using ", this.yField);
 	}
 
 	makePoint (pt) {
@@ -21,8 +25,15 @@ class Signal {
 		}
 	}
 
+	clamp (range) {
+		this._clamp = {
+			start: +range.start,
+			end: +range.end
+		};
+	}
+
 	extent (which) {
-		return d3.extent(this._points, function (d) { return _.get(d, which); });
+		return d3.extent(this.points(), function (d) { return _.get(d, which); });
 	}
 
 	create (dataPoints) {
@@ -30,6 +41,10 @@ class Signal {
 	}
 
 	points () {
-		return this._points;
+		var clamp = this._clamp;
+
+		return _.filter(this._points, function (pt) {
+			return !clamp || clamp.start <= pt.x && clamp.end >= pt.x;
+		});
 	}
 }

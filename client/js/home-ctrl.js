@@ -11,6 +11,10 @@ $(function () {
             signal: null,
             lineGraph: null
         },
+        coinGraph: {
+            rangeStart: null,
+            rangeEnd: null
+        },
         balances: null
     };
 
@@ -21,16 +25,37 @@ $(function () {
         "priceData": "/price-data"
     };
 
-    var coinSignalsMap = {
-        "low": "L",
-        "high": "H",
-        "current": "C",
-        "volume": "V"
-    };
+    var coinSignalsMap = [
+        {
+            "y": "L",
+            "label": "low",
+            "color": "blue"
+        },
+        {
+            "y": "H",
+            "label": "high",
+            "color": "red"
+        },
+        {
+            "y": "C",
+            "label": "current",
+            "color": "black"
+        },
+        {
+            "y": "V",
+            "label": "volume",
+            "color": "green"
+        },
+        {
+            "y": "BV",
+            "label": "bvolume",
+            "color": "green"
+        }
+    ];
 
     var coinCanvasId = "coinGraph";
-    var coinCanvasWidth = 450;
-    var coinCanvasHeight = 400;
+    var coinCanvasWidth = 650;
+    var coinCanvasHeight = 600;
 
     var HomeCtrl = {
         getBalances: function () {
@@ -91,23 +116,48 @@ $(function () {
                 return;
             }
 
-            var signals = _.map(coinSignalsMap, function (yField, label) {
-                var coinSignal = new Signal({ y: yField, label: name });
+            var signals = _.map(coinSignalsMap, function (opts) {
+                var coinSignal = new Signal(opts);
                 coinSignal.create(priceData);
 
                 return coinSignal;
             });
-            
+
             var lineGraph = new LineGraph(coinCanvasWidth, coinCanvasHeight, coinCanvasId, signals);
             self.setCoinInfo({
                 coinKey: "lineGraph",
                 data: lineGraph
             });
 
+            // set the range start,end from at least one signal
+            var focusRange = lineGraph.getFocusRange();
+            self.coinGraph.rangeStart = focusRange.start;
+            self.coinGraph.rangeEnd = focusRange.end;
+
             self.renderCoin();
         },
         setCoinInfo: function (info) {
             this.focusCoinInfo[info.coinKey] = info.data;
+        },
+        setControl: function (key) {
+            console.log("Setting control key: ", key);
+            console.log("New val: ", _.get(this.coinGraph, key));
+            var self = this;
+
+            switch (key) {
+                case "rangeStart":
+                case "rangeEnd":
+                    var lineGraph = _.get(self.focusCoinInfo, "lineGraph");
+
+                    if (lineGraph) {
+                        console.log("setting new focus range.");
+                        lineGraph.setFocusRange({
+                            start: moment(self.coinGraph.rangeStart),
+                            end: moment(self.coinGraph.rangeEnd)
+                        });
+                    }
+            };
+
         },
         renderCoin: function () {
             var lineGraph = this.focusCoinInfo.lineGraph;

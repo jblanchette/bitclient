@@ -31,11 +31,6 @@ var request = function (url, type, data) {
             data: data || null
         });
     }
-
-    
-
-
-    
 };
 
 

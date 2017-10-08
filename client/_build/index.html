@@ -60,7 +60,39 @@
                             </diV>
 
                             <div class="coin-info">
-                                <canvas id="coinGraph" height="400" width="400"></canvas>
+
+                                <div class="coin-info-controls">
+                                    <b>Controls</b>
+
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                Start:
+                                            </td>
+                                            <td>
+                                                <input 
+                                                  type="datetime-local" 
+                                                  v-on:change="setControl('rangeStart')"
+                                                  v-model="coinGraph.rangeStart">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                End:
+                                            </td>
+                                            <td>
+                                                <input type="datetime-local" v-model="coinGraph.rangeEnd">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <button v-on:click="renderCoin()">render</button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <canvas id="coinGraph" height="600" width="650"></canvas>
                             <div>
                         </div>
                     </div>
