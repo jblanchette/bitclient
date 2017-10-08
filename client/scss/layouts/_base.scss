@@ -2,16 +2,15 @@ html,
 body {
     margin: 0;
     padding: 0;
+    background: $light;
 }
 
 $min-game-height: 450px;
 $min-game-width: 350px;
 
 .wrapper {
-    height: 100%;
     font-size: 22px;
     font-family: verdana;
-    background: $light;
     min-width: $min-game-width;
     min-height: $min-game-height;
 }

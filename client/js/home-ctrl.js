@@ -21,6 +21,13 @@ $(function () {
         "priceData": "/price-data"
     };
 
+    var coinSignalsMap = {
+        "low": "L",
+        "high": "H",
+        "current": "C",
+        "volume": "V"
+    };
+
     var coinCanvasId = "coinGraph";
     var coinCanvasWidth = 450;
     var coinCanvasHeight = 400;
@@ -65,6 +72,8 @@ $(function () {
             
             if (coin) {
                 var tickerName = "BTC-" + _.get(coin, "Currency");
+
+                console.time("coinFetch");
                 return Promise.all(_.map(["ticker", "marketHistory", "priceData"], function (coinKey) {
                     return self.fetchCoinData(tickerName, coinKey)
                         .then(self.setCoinInfo);
@@ -72,7 +81,7 @@ $(function () {
             }
         },
         selectCoinHandler: function () {
-            console.log("Done loading, draw canvas.");
+            console.timeEnd("coinFetch");
 
             var self = this;
             var coin = self.focusCoin;
@@ -82,16 +91,14 @@ $(function () {
                 return;
             }
 
-            var coinSignal = new Signal();
-            coinSignal.create(priceData);
-            
+            var signals = _.map(coinSignalsMap, function (yField, label) {
+                var coinSignal = new Signal({ y: yField, label: name });
+                coinSignal.create(priceData);
 
-            var lineGraph = new LineGraph(coinCanvasWidth, coinCanvasHeight, coinCanvasId, coinSignal);
-            self.setCoinInfo({
-                coinKey: "signal",
-                data: coinSignal
+                return coinSignal;
             });
-
+            
+            var lineGraph = new LineGraph(coinCanvasWidth, coinCanvasHeight, coinCanvasId, signals);
             self.setCoinInfo({
                 coinKey: "lineGraph",
                 data: lineGraph

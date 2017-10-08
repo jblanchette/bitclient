@@ -39,13 +39,12 @@ button.btn {
 html,
 body {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  background: #E4D2C2; }
 
 .wrapper {
-  height: 100%;
   font-size: 22px;
   font-family: verdana;
-  background: #E4D2C2;
   min-width: 350px;
   min-height: 450px; }
 
