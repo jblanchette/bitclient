@@ -14,6 +14,8 @@ class Signal {
 		this.xField = _.get(opt, "x") || "T";
 		this.yField = _.get(opt, "y") || "C";
 		this.color = _.get(opt, "color") || "#FFAACC";
+		this.label = _.get(opt, "label") || null;
+		this.active = _.has(opt, "active") ? _.get(opt, "active") : true;
 
 		console.log("Using ", this.yField);
 	}

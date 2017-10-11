@@ -55,8 +55,7 @@
                             <h2>Selected Coin: {{ focusCoin.Currency }}</h2>
 
                             <div v-if="focusCoinInfo.ticker">
-                                Ticker Data: <br>
-                                {{ focusCoinInfo.ticker }}
+                                Ticker Data: {{ focusCoinInfo.ticker }}
                             </diV>
 
                             <div class="coin-info">
@@ -76,7 +75,6 @@
                                                   v-model="coinGraph.rangeStart"
                                                   v-bind:min="coinGraph.rangeMinStart"
                                                   v-bind:max="coinGraph.rangeMaxStart">
-
                                             </td>
                                         </tr>
                                         <tr>
@@ -110,6 +108,23 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <td>
+                                                Signals:
+                                            </td>
+
+                                            <td>
+                                                <span v-for="signal in coinGraph.signals">
+                                                    <label>
+                                                        <input 
+                                                          type="checkbox"
+                                                          v-on:change="setControl('signalState', signal.label)"
+                                                          v-model="signal.active">
+                                                        {{ signal.label }}
+                                                    </label>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <td colspan="2">
                                                 <button v-on:click="renderCoin()">render</button>
                                             </td>
@@ -117,7 +132,7 @@
                                     </table>
                                 </div>
 
-                                <canvas id="coinGraph" height="600" width="650"></canvas>
+                                <canvas id="coinGraph" height="500" width="650"></canvas>
                             <div>
                         </div>
                     </div>

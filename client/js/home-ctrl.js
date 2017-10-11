@@ -1,6 +1,7 @@
 $(function () {
 
     console.log("Started bitclient");
+
     var vmData = {
         focusCoin: null,
         focusCoinInfo: {
@@ -12,7 +13,41 @@ $(function () {
             lineGraph: null
         },
         coinGraph: {
-            interval: "oneMin",
+            interval: "thirtyMin",
+            pointSignals:  [
+                {
+                    "y": "L",
+                    "label": "low",
+                    "color": "blue",
+                    "active": false
+                },
+                {
+                    "y": "H",
+                    "label": "high",
+                    "color": "red",
+                    "active": false
+                },
+                {
+                    "y": "C",
+                    "label": "current",
+                    "color": "black",
+                    "active": false
+                }
+            ],
+            amountSignals: [
+                {
+                    "y": "V",
+                    "label": "volume",
+                    "color": "green",
+                    "active": false
+                },
+                {
+                    "y": "BV",
+                    "label": "base volume",
+                    "color": "green",
+                    "active": true
+                }
+            ]
             rangeStart: null,
             rangeEnd: null
         },
@@ -26,29 +61,15 @@ $(function () {
         "priceData": "/price-data"
     };
 
-    var coinSignalsMap = [
-        {
-            "y": "L",
-            "label": "low",
-            "color": "blue"
-        },
-        {
-            "y": "H",
-            "label": "high",
-            "color": "red"
-        },
-        {
-            "y": "C",
-            "label": "current",
-            "color": "black"
-        }
-    ];
-
     var coinCanvasId = "coinGraph";
     var coinCanvasWidth = 650;
-    var coinCanvasHeight = 600;
+    var coinCanvasHeight = 500;
 
     var HomeCtrl = {
+        $log: function () {
+            var args = [...arguments];
+            console.log.apply(console, JSON.parse(JSON.stringify(args)));
+        },
         getBalances: function () {
             console.time("balances");
             var self = this;
@@ -106,7 +127,9 @@ $(function () {
                 return;
             }
 
-            var signals = _.map(coinSignalsMap, function (opts) {
+            self.$log("Price data: ", priceData);
+
+            var signals = _.map(self.coinGraph.pointSignals, function (opts) {
                 var coinSignal = new Signal(opts);
                 coinSignal.create(priceData);
 
@@ -138,7 +161,7 @@ $(function () {
         setCoinInfo: function (info) {
             this.focusCoinInfo[info.coinKey] = info.data;
         },
-        setControl: function (key) {
+        setControl: function (key, data) {
             var self = this;
 
             switch (key) {
@@ -163,6 +186,15 @@ $(function () {
                     self.fetchCoinData(tickerName, "priceData")
                         .then(self.setCoinInfo)
                         .then(self.selectCoinHandler);
+                break;
+                case "signalState":
+                    var coinSignal = _.find(self.coinGraph.signals, { label: data });
+                    var lineGraph = self.focusCoinInfo.lineGraph;
+                    if (lineGraph) {
+                        var lineSignal = _.find(lineGraph.signals, { label: data });
+                        lineSignal.active = coinSignal.active;
+                    }
+                    self.renderCoin();
                 break;
             };
 

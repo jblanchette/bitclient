@@ -54,6 +54,7 @@ class LineGraph {
 		ctx.moveTo(0, this.yMidpoint);
 		ctx.lineTo(this.width, this.yMidpoint);
 		ctx.stroke();
+		ctx.closePath();
 	}
 
 	renderSignal (ctx, signal, yDomain) {
@@ -78,21 +79,27 @@ class LineGraph {
 			var x = self.xScale(point.x);
 			var y = self.yScale(point.y) + yOffset;
 
-			ctx.lineTo(x, y);
+			//ctx.lineTo(x, y);
+
+			ctx.strokeRect(x, y, 1, 1);
 		});
 		
 		ctx.stroke();
+		ctx.closePath();
 	}
 
 	renderSignals (ctx) {
 		var self = this;
 		// figure out the overal max yDomain for all signals
-		var yDomain = _.maxBy(this.signals, function (signal) {
+
+		var activeSignals = _.filter(this.signals, 'active');
+
+		var yDomain = _.maxBy(activeSignals, function (signal) {
 			return signal.domain();
 		}).domain();
 		
-		_.each(this.signals, function (signal) {
-			self.renderSignal(ctx, signal, yDomain);
+		_.each(activeSignals, function (signal) {
+				self.renderSignal(ctx, signal, yDomain);
 		});
 	}
 
